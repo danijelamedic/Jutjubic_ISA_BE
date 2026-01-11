@@ -29,6 +29,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    private final EmailService emailService;
+
 
     public AuthService(
             UserRepository userRepository,
@@ -36,7 +38,8 @@ public class AuthService {
             PasswordEncoder passwordEncoder,
             LoginRateLimiter loginRateLimiter,
             JwtService jwtService,
-            UserDetailsService userDetailsService
+            UserDetailsService userDetailsService,
+            EmailService emailService
     ) {
         this.userRepository = userRepository;
         this.activationTokenRepository = activationTokenRepository;
@@ -44,6 +47,7 @@ public class AuthService {
         this.loginRateLimiter = loginRateLimiter;
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.emailService = emailService;
     }
 
 
@@ -100,9 +104,9 @@ public class AuthService {
 
         activationTokenRepository.save(token);
 
-        // 5) "slanje email-a" za sada: vrati link ili loguj (kasnije pravi mail sender)
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String activationLink = "http://localhost:8080/api/auth/activate?token=" + tokenValue;
+        emailService.sendActivationEmail(user.getEmail(), activationLink);
+
         return tokenValue;
     }
 
