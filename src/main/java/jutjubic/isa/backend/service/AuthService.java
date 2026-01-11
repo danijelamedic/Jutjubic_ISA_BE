@@ -6,6 +6,10 @@ import jutjubic.isa.backend.model.Role;
 import jutjubic.isa.backend.model.User;
 import jutjubic.isa.backend.repository.ActivationTokenRepository;
 import jutjubic.isa.backend.repository.UserRepository;
+import jutjubic.isa.backend.security.JwtService;
+import jutjubic.isa.backend.security.LoginRateLimiter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -21,14 +25,27 @@ public class AuthService {
     private final ActivationTokenRepository activationTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final LoginRateLimiter loginRateLimiter;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
-    public AuthService(UserRepository userRepository,
-                       ActivationTokenRepository activationTokenRepository,
-                       PasswordEncoder passwordEncoder) {
+
+    public AuthService(
+            UserRepository userRepository,
+            ActivationTokenRepository activationTokenRepository,
+            PasswordEncoder passwordEncoder,
+            LoginRateLimiter loginRateLimiter,
+            JwtService jwtService,
+            UserDetailsService userDetailsService
+    ) {
         this.userRepository = userRepository;
         this.activationTokenRepository = activationTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.loginRateLimiter = loginRateLimiter;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
+
 
 
     public String register(RegistrationRequest req) {
@@ -114,4 +131,24 @@ public class AuthService {
         // brisanje tokena kad sve zavrsi
         activationTokenRepository.delete(token);
     }
+
+
+    public String login(String email, String rawPassword, String ip) {
+        loginRateLimiter.checkAllowed(ip);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Pogrešan email ili lozinka."));
+
+        if (!user.isEnabled()) {
+            throw new IllegalArgumentException("Nalog nije aktiviran. Proverite email i aktivirajte nalog.");
+        }
+
+        if (!passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Pogrešan email ili lozinka.");
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        return jwtService.generateToken(userDetails);
+    }
+
 }

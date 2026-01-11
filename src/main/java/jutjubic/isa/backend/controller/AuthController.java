@@ -1,5 +1,8 @@
 package jutjubic.isa.backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jutjubic.isa.backend.dto.JwtResponse;
+import jutjubic.isa.backend.dto.LoginRequest;
 import jutjubic.isa.backend.dto.RegistrationRequest;
 import jutjubic.isa.backend.dto.ResponseMessage;
 import jutjubic.isa.backend.service.AuthService;
@@ -27,5 +30,13 @@ public class AuthController {
         authService.activate(token);
         return ResponseEntity.ok(new ResponseMessage("Nalog je uspešno aktiviran."));
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletRequest httpReq) {
+        String ip = httpReq.getRemoteAddr();
+        String token = authService.login(req.getEmail(), req.getPassword(), ip);
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
 
 }
