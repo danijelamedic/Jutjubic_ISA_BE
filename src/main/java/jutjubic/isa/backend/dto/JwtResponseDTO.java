@@ -1,11 +1,11 @@
 package jutjubic.isa.backend.dto;
 
-public class JwtResponse {
+public class JwtResponseDTO {
     private String token;
 
-    public JwtResponse() { }
+    public JwtResponseDTO() { }
 
-    public JwtResponse(String token) {
+    public JwtResponseDTO(String token) {
         this.token = token;
     }
 

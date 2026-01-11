@@ -1,11 +1,11 @@
 package jutjubic.isa.backend.dto;
 
-public class ResponseMessage {
+public class ResponseMessageDTO {
     private String message;
 
-    public ResponseMessage() {}
+    public ResponseMessageDTO() {}
 
-    public ResponseMessage(String message) {
+    public ResponseMessageDTO(String message) {
         this.message = message;
     }
 

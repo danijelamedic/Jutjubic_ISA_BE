@@ -1,6 +1,6 @@
 package jutjubic.isa.backend.service;
 
-import jutjubic.isa.backend.dto.RegistrationRequest;
+import jutjubic.isa.backend.dto.RegistrationRequestDTO;
 import jutjubic.isa.backend.model.ActivationToken;
 import jutjubic.isa.backend.model.Role;
 import jutjubic.isa.backend.model.User;
@@ -52,7 +52,7 @@ public class AuthService {
 
 
 
-    public String register(RegistrationRequest req) {
+    public String register(RegistrationRequestDTO req) {
         // required polja
         if (req.getEmail() == null || req.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email je obavezan.");

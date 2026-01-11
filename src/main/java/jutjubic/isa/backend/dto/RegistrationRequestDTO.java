@@ -1,6 +1,6 @@
 package jutjubic.isa.backend.dto;
 
-public class RegistrationRequest {
+public class RegistrationRequestDTO {
 
     private String email;
     private String username;
@@ -10,7 +10,7 @@ public class RegistrationRequest {
     private String lastName;
     private String address;
 
-    public RegistrationRequest() {
+    public RegistrationRequestDTO() {
     }
 
     public String getEmail() {
