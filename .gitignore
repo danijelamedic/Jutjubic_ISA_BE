@@ -33,3 +33,4 @@ build/
 .vscode/
 
 application-local.properties
+src/main/java/jutjubic/isa/backend/controller/TestController.java
