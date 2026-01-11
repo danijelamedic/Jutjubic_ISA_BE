@@ -104,7 +104,7 @@ public class AuthService {
 
         activationTokenRepository.save(token);
 
-        String activationLink = "http://localhost:8080/api/auth/activate?token=" + tokenValue;
+        String activationLink = "http://localhost:4200/activate?token=" + tokenValue;
         emailService.sendActivationEmail(user.getEmail(), activationLink);
 
         return tokenValue;
