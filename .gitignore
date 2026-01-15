@@ -34,3 +34,5 @@ build/
 
 application-local.properties
 src/main/java/jutjubic/isa/backend/controller/TestController.java
+src/main/java/jutjubic/isa/backend/config/DevDataSeeder.java
+
