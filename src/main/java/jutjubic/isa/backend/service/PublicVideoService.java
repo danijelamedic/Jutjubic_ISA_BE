@@ -1,16 +1,19 @@
 package jutjubic.isa.backend.service;
 
 import jutjubic.isa.backend.dto.CommentDTO;
-import jutjubic.isa.backend.dto.VideoCardDTO;
-import jutjubic.isa.backend.dto.VideoDetailsDTO;
+import jutjubic.isa.backend.dto.video.VideoCardDTO;
+import jutjubic.isa.backend.dto.video.VideoDetailsDTO;
 import jutjubic.isa.backend.model.VideoPost;
 import jutjubic.isa.backend.repository.CommentRepository;
 import jutjubic.isa.backend.repository.VideoLikeRepository;
 import jutjubic.isa.backend.repository.VideoPostRepository;
+import jutjubic.isa.backend.service.storage.ThumbnailCacheService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +25,16 @@ public class PublicVideoService {
     private final VideoPostRepository videoPostRepository;
     private final VideoLikeRepository videoLikeRepository;
     private final CommentRepository commentRepository;
+    private final ThumbnailCacheService thumbnailCacheService;
 
     public PublicVideoService(VideoPostRepository videoPostRepository,
                               VideoLikeRepository videoLikeRepository,
-                              CommentRepository commentRepository) {
+                              CommentRepository commentRepository,
+                              ThumbnailCacheService thumbnailCacheService) {
         this.videoPostRepository = videoPostRepository;
         this.videoLikeRepository = videoLikeRepository;
         this.commentRepository = commentRepository;
+        this.thumbnailCacheService = thumbnailCacheService;
     }
     @Transactional(readOnly = true)
     public Page<VideoCardDTO> getPublicVideos(int page, int size) {
@@ -91,8 +97,33 @@ public class PublicVideoService {
                 video.getAuthor().getUsername(),
                 video.getCreatedAt(),
                 likeCount,
-                commentCount
+                commentCount,
+                video.getLocation(),
+                video.getDescription()
         );
+    }
+
+//    @Transactional(readOnly = true)
+//    public byte[] getThumbnailBytes(Long videoId) {
+//        VideoPost post = videoPostRepository.findById(videoId)
+//                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+//
+//        return thumbnailCacheService.getThumbnailBytes(post.getThumbnailPath());
+//    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<byte[]> getThumbnailResponse(Long videoId) {
+        VideoPost post = videoPostRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+
+        byte[] bytes = thumbnailCacheService.getThumbnailBytes(post.getThumbnailPath());
+
+        MediaType type = MediaType.IMAGE_JPEG;
+        String path = post.getThumbnailPath().toLowerCase();
+        if (path.endsWith(".png")) type = MediaType.IMAGE_PNG;
+        if (path.endsWith(".webp")) type = MediaType.valueOf("image/webp");
+
+        return ResponseEntity.ok().contentType(type).body(bytes);
     }
 
 }

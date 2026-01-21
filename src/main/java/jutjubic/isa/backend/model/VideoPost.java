@@ -17,12 +17,27 @@ public class VideoPost {
     @Column(nullable = false, length = 2000)
     private String description;
 
-    // za 3.1 samo string posle ce biti videofajl
-    @Column(nullable = true, length = 500)
-    private String videoUrl;
+    // tagovi: za start kao csv string, npr. "food,travel,funny"
+    @Column(nullable = false, length = 500)
+    private String tags;
+
+    // lokalno cuvanje fajlova: u bazi su samo putanje
+    @Column(nullable = false, length = 500)
+    private String videoPath;
+
+    @Column(nullable = false, length = 500)
+    private String thumbnailPath;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    // 3.7-scheduled post
+    @Column(nullable = true)
+    private LocalDateTime scheduledAt;
+
+    // geolocation
+    @Column(nullable = true, length = 255)
+    private String location;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
@@ -30,32 +45,35 @@ public class VideoPost {
 
     public VideoPost() { }
 
-    public VideoPost(String title, String description, String videoUrl, User author) {
-        this.title = title;
-        this.description = description;
-        this.videoUrl = videoUrl;
-        this.author = author;
-        this.createdAt = LocalDateTime.now();
-    }
-
     @PrePersist
     public void prePersist() {
         if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now();
+        }
+        if (this.tags == null) {
+            this.tags = "";
         }
     }
 
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
-    public String getVideoUrl() { return videoUrl; }
+    public String getTags() { return tags; }
+    public String getVideoPath() { return videoPath; }
+    public String getThumbnailPath() { return thumbnailPath; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getScheduledAt() { return scheduledAt; }
+    public String getLocation() { return location; }
     public User getAuthor() { return author; }
 
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
-    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public void setTags(String tags) { this.tags = tags; }
+    public void setVideoPath(String videoPath) { this.videoPath = videoPath; }
+    public void setThumbnailPath(String thumbnailPath) { this.thumbnailPath = thumbnailPath; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setScheduledAt(LocalDateTime scheduledAt) { this.scheduledAt = scheduledAt; }
+    public void setLocation(String location) { this.location = location; }
     public void setAuthor(User author) { this.author = author; }
 }

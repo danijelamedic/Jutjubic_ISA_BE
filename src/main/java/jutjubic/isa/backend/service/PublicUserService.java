@@ -1,7 +1,7 @@
 package jutjubic.isa.backend.service;
 
 import jutjubic.isa.backend.dto.PublicUserDTO;
-import jutjubic.isa.backend.dto.VideoCardDTO;
+import jutjubic.isa.backend.dto.video.VideoCardDTO;
 import jutjubic.isa.backend.model.User;
 import jutjubic.isa.backend.model.VideoPost;
 import jutjubic.isa.backend.repository.CommentRepository;

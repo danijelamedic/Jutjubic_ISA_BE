@@ -3,7 +3,7 @@ package jutjubic.isa.backend.controller;
 import jutjubic.isa.backend.dto.PublicUserDTO;
 import jutjubic.isa.backend.service.PublicUserService;
 import org.springframework.web.bind.annotation.*;
-import jutjubic.isa.backend.dto.VideoCardDTO;
+import jutjubic.isa.backend.dto.video.VideoCardDTO;
 import org.springframework.data.domain.Page;
 
 @RestController
