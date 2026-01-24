@@ -8,15 +8,20 @@ import jutjubic.isa.backend.repository.CommentRepository;
 import jutjubic.isa.backend.repository.VideoLikeRepository;
 import jutjubic.isa.backend.repository.VideoPostRepository;
 import jutjubic.isa.backend.service.storage.ThumbnailCacheService;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -126,4 +131,22 @@ public class PublicVideoService {
         return ResponseEntity.ok().contentType(type).body(bytes);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Resource> getVideoStreamResponse(Long videoId) {
+
+        VideoPost post = videoPostRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+
+        String videoPath = post.getVideoPath();
+        Path path = Paths.get(videoPath);
+
+        Resource resource = new FileSystemResource(path);
+
+        MediaType type = MediaType.valueOf("video/mp4");
+
+        return ResponseEntity.ok()
+                .contentType(type)
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache")
+                .body(resource);
+    }
 }

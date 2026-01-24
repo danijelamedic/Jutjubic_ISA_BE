@@ -4,8 +4,10 @@ import jutjubic.isa.backend.dto.CommentDTO;
 import jutjubic.isa.backend.dto.video.VideoCardDTO;
 import jutjubic.isa.backend.dto.video.VideoDetailsDTO;
 import jutjubic.isa.backend.service.PublicVideoService;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +50,10 @@ public class PublicVideoController {
         return publicVideoService.getThumbnailResponse(id);
     }
 
+    @GetMapping("/{id}/stream")
+    public ResponseEntity<Resource> streamVideo(@PathVariable Long id) {
+        return publicVideoService.getVideoStreamResponse(id);
+    }
 
 
 }
