@@ -1,4 +1,4 @@
-package jutjubic.isa.backend.dto;
+package jutjubic.isa.backend.dto.comment;
 
 import java.time.LocalDateTime;
 

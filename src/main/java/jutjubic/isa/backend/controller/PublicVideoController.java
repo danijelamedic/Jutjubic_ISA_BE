@@ -1,25 +1,26 @@
 package jutjubic.isa.backend.controller;
 
-import jutjubic.isa.backend.dto.CommentDTO;
+import jutjubic.isa.backend.dto.comment.CommentDTO;
 import jutjubic.isa.backend.dto.video.VideoCardDTO;
 import jutjubic.isa.backend.dto.video.VideoDetailsDTO;
+import jutjubic.isa.backend.service.CommentService;
 import jutjubic.isa.backend.service.PublicVideoService;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/videos")
 public class PublicVideoController {
 
     private final PublicVideoService publicVideoService;
+    private final CommentService commentService;
 
-    public PublicVideoController(PublicVideoService publicVideoService) {
+    public PublicVideoController(PublicVideoService publicVideoService, CommentService commentService) {
         this.publicVideoService = publicVideoService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -27,23 +28,31 @@ public class PublicVideoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return publicVideoService.getPublicVideos(page, size);
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        int safePage = Math.max(page, 0);
+
+        return publicVideoService.getPublicVideos(safePage, safeSize);
     }
+
     @GetMapping("/{id}/comments")
-    public List<CommentDTO> getVideoComments(@PathVariable Long id) {
-        return publicVideoService.getCommentsForVideo(id);
+    public Page<CommentDTO> getVideoComments(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        int safePage = Math.max(page, 0);
+
+        return commentService.getCommentsForVideo(id, safePage, safeSize);
+
     }
+
 
     @GetMapping("/{id}")
     public VideoDetailsDTO getVideoDetails(@PathVariable Long id) {
 
         return publicVideoService.getVideoDetails(id);
     }
-
-//    @GetMapping(value = "/{id}/thumbnail", produces = "image/*")
-//    public byte[] getThumbnail(@PathVariable Long id) {
-//        return publicVideoService.getThumbnailBytes(id);
-//    }
 
     @GetMapping("/{id}/thumbnail")
     public ResponseEntity<byte[]> getThumbnail(@PathVariable Long id) {
