@@ -1,6 +1,6 @@
 package jutjubic.isa.backend.service;
 
-import jutjubic.isa.backend.dto.CommentDTO;
+import jutjubic.isa.backend.dto.comment.CommentDTO;
 import jutjubic.isa.backend.dto.video.VideoCardDTO;
 import jutjubic.isa.backend.dto.video.VideoDetailsDTO;
 import jutjubic.isa.backend.model.VideoPost;
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Service
 public class PublicVideoService {
@@ -31,15 +30,18 @@ public class PublicVideoService {
     private final VideoLikeRepository videoLikeRepository;
     private final CommentRepository commentRepository;
     private final ThumbnailCacheService thumbnailCacheService;
+    private final CommentService commentService;
 
     public PublicVideoService(VideoPostRepository videoPostRepository,
                               VideoLikeRepository videoLikeRepository,
                               CommentRepository commentRepository,
-                              ThumbnailCacheService thumbnailCacheService) {
+                              ThumbnailCacheService thumbnailCacheService,
+                              CommentService commentService) {
         this.videoPostRepository = videoPostRepository;
         this.videoLikeRepository = videoLikeRepository;
         this.commentRepository = commentRepository;
         this.thumbnailCacheService = thumbnailCacheService;
+        this.commentService = commentService;
     }
     @Transactional(readOnly = true)
     public Page<VideoCardDTO> getPublicVideos(int page, int size) {
@@ -69,22 +71,8 @@ public class PublicVideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDTO> getCommentsForVideo(Long videoId) {
-
-        if (!videoPostRepository.existsById(videoId)) {
-            throw new IllegalArgumentException("Video not found");
-        }
-
-        return commentRepository
-                .findByVideoPostIdOrderByCreatedAtDesc(videoId)
-                .stream()
-                .map(comment -> new CommentDTO(
-                        comment.getId(),
-                        comment.getText(),
-                        comment.getCreatedAt(),
-                        comment.getAuthor().getUsername()
-                ))
-                .toList();
+    public Page<CommentDTO> getCommentsForVideo(Long videoId, int page, int size) {
+        return commentService.getCommentsForVideo(videoId, page, size);
     }
 
     @Transactional(readOnly = true)
@@ -107,14 +95,6 @@ public class PublicVideoService {
                 video.getDescription()
         );
     }
-
-//    @Transactional(readOnly = true)
-//    public byte[] getThumbnailBytes(Long videoId) {
-//        VideoPost post = videoPostRepository.findById(videoId)
-//                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
-//
-//        return thumbnailCacheService.getThumbnailBytes(post.getThumbnailPath());
-//    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<byte[]> getThumbnailResponse(Long videoId) {
