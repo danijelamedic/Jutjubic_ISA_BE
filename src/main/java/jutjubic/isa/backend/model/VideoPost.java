@@ -17,7 +17,7 @@ public class VideoPost {
     @Column(nullable = false, length = 2000)
     private String description;
 
-    // tagovi: za start kao csv string, npr. "food,travel,funny"
+    // tagovi csv string, npr. "food,travel,funny"
     @Column(nullable = false, length = 500)
     private String tags;
 
@@ -31,13 +31,15 @@ public class VideoPost {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // 3.7-scheduled post
     @Column(nullable = true)
     private LocalDateTime scheduledAt;
 
     // geolocation
     @Column(nullable = true, length = 255)
     private String location;
+
+    @Column(name = "view_count", nullable = false)
+    private long viewCount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
@@ -65,6 +67,8 @@ public class VideoPost {
     public LocalDateTime getScheduledAt() { return scheduledAt; }
     public String getLocation() { return location; }
     public User getAuthor() { return author; }
+    public long getViewCount() { return viewCount; }
+
 
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
@@ -76,4 +80,5 @@ public class VideoPost {
     public void setScheduledAt(LocalDateTime scheduledAt) { this.scheduledAt = scheduledAt; }
     public void setLocation(String location) { this.location = location; }
     public void setAuthor(User author) { this.author = author; }
+    public void setViewCount(long viewCount) { this.viewCount = viewCount; }
 }

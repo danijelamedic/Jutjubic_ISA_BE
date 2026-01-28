@@ -43,11 +43,9 @@ public class VideoPostService {
         String thumbnailPath = null;
 
         try {
-            // validacije
             validateVideo(video);
             validateThumbnail(thumbnail);
 
-            // snimi fajlove
             videoPath = fileStorageService.storeVideo(video);
             thumbnailPath = fileStorageService.storeThumbnail(thumbnail);
 
@@ -57,8 +55,6 @@ public class VideoPostService {
 //                throw new RuntimeException("Forced failure for rollback test");
 //            }
 
-
-            // kreira VideoPost
             VideoPost post = new VideoPost();
             post.setTitle(dto.getTitle());
             post.setDescription(dto.getDescription());

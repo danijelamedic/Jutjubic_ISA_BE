@@ -12,12 +12,13 @@ public class VideoDetailsDTO {
     private long commentCount;
     private String location;
     private String description;
+    private long viewCount;
 
     public VideoDetailsDTO() {
     }
 
     public VideoDetailsDTO(Long id, String title, String authorUsername,
-                           LocalDateTime createdAt, long likeCount, long commentCount, String location, String description) {
+                           LocalDateTime createdAt, long likeCount, long commentCount, String location, String description, long viewCount) {
         this.id = id;
         this.title = title;
         this.authorUsername = authorUsername;
@@ -26,6 +27,7 @@ public class VideoDetailsDTO {
         this.commentCount = commentCount;
         this.location = location;
         this.description = description;
+        this.viewCount = viewCount;
     }
 
     public Long getId() { return id; }
@@ -51,4 +53,7 @@ public class VideoDetailsDTO {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public long getViewCount() { return viewCount; }
+    public void setViewCount(long viewCount) { this.viewCount = viewCount; }
 }
