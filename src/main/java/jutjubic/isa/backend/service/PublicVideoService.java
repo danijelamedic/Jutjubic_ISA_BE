@@ -92,7 +92,8 @@ public class PublicVideoService {
                 likeCount,
                 commentCount,
                 video.getLocation(),
-                video.getDescription()
+                video.getDescription(),
+                video.getViewCount()
         );
     }
 
@@ -129,4 +130,13 @@ public class PublicVideoService {
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache")
                 .body(resource);
     }
+
+    @Transactional
+    public void incrementView(Long videoId) {
+        int updated = videoPostRepository.incrementViewCount(videoId);
+        if (updated == 0) {
+            throw new IllegalArgumentException("Video not found");
+        }
+    }
+
 }

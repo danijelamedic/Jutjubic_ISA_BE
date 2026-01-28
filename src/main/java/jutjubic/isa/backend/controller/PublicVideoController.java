@@ -64,5 +64,11 @@ public class PublicVideoController {
         return publicVideoService.getVideoStreamResponse(id);
     }
 
+    @PostMapping("/{id}/views")
+    public ResponseEntity<Void> incrementViews(@PathVariable Long id) {
+        publicVideoService.incrementView(id);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
