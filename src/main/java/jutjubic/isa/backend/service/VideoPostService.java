@@ -83,6 +83,11 @@ public class VideoPostService {
             ));
 
 
+            // force fail test
+//            if (dto.getTitle().toLowerCase().contains("fail")) {
+//                throw new RuntimeException("Forced failure for rollback test");
+//            }
+
             return new CreateVideoPostResponseDTO(
                     post.getId(),
                     post.getTitle(),

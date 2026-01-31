@@ -14,11 +14,18 @@ public class RabbitMessageConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
-                                         Jackson2JsonMessageConverter converter) {
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(converter);
-        return template;
+    @Bean(name = "jsonRabbitTemplate")
+    public RabbitTemplate jsonRabbitTemplate(
+            ConnectionFactory connectionFactory,
+            Jackson2JsonMessageConverter converter
+    ) {
+        RabbitTemplate t = new RabbitTemplate(connectionFactory);
+        t.setMessageConverter(converter);
+        return t;
+    }
+
+    @Bean(name = "protobufRabbitTemplate")
+    public RabbitTemplate protobufRabbitTemplate(ConnectionFactory connectionFactory) {
+        return new RabbitTemplate(connectionFactory);
     }
 }

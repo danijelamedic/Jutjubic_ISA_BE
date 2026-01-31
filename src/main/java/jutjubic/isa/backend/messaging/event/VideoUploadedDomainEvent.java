@@ -33,4 +33,7 @@ public class VideoUploadedDomainEvent {
     public long getVideoSizeBytes() { return videoSizeBytes; }
     public long getThumbnailSizeBytes() { return thumbnailSizeBytes; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+
+
 }

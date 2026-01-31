@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package jutjubic.upload.proto;
+
+option java_package = "jutjubic.upload.proto";
+option java_multiple_files = true;
+
+message UploadCreatedEvent {
+  int64 videoId = 1;
+  string title = 2;
+  int64 videoSizeBytes = 3;
+  string authorUsername = 4;
+  int64 createdAtEpochMillis = 5;
+}
