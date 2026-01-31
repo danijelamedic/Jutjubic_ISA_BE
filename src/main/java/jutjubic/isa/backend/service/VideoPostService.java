@@ -56,7 +56,7 @@ public class VideoPostService {
             videoPath = fileStorageService.storeVideo(video);
             thumbnailPath = fileStorageService.storeThumbnail(thumbnail);
 
-
+// REZERVA 
 //            // FORCED FAIL TEST
 //            if (dto.getTitle().toLowerCase().contains("fail")) {
 //                throw new RuntimeException("Forced failure for rollback test");
