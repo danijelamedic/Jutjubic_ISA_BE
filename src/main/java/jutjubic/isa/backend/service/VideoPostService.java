@@ -3,6 +3,7 @@ package jutjubic.isa.backend.service;
 import jakarta.transaction.Transactional;
 import jutjubic.isa.backend.dto.video.CreateVideoPostRequestDTO;
 import jutjubic.isa.backend.dto.video.CreateVideoPostResponseDTO;
+import jutjubic.isa.backend.messaging.event.VideoUploadedDomainEvent;
 import jutjubic.isa.backend.model.User;
 import jutjubic.isa.backend.model.VideoPost;
 import jutjubic.isa.backend.repository.UserRepository;
@@ -10,6 +11,8 @@ import jutjubic.isa.backend.repository.VideoPostRepository;
 import jutjubic.isa.backend.service.storage.FileStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.ApplicationEventPublisher;
+
 
 @Service
 public class VideoPostService {
@@ -17,15 +20,19 @@ public class VideoPostService {
     private final UserRepository userRepository;
     private final VideoPostRepository videoPostRepository;
     private final FileStorageService fileStorageService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     public VideoPostService(
             UserRepository userRepository,
             VideoPostRepository videoPostRepository,
-            FileStorageService fileStorageService
+            FileStorageService fileStorageService,
+            ApplicationEventPublisher eventPublisher
     ) {
         this.userRepository = userRepository;
         this.videoPostRepository = videoPostRepository;
         this.fileStorageService = fileStorageService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -65,6 +72,21 @@ public class VideoPostService {
             post.setAuthor(author);
 
             videoPostRepository.save(post);
+
+            eventPublisher.publishEvent(new VideoUploadedDomainEvent(
+                    post.getId(),
+                    post.getTitle(),
+                    author.getUsername(),
+                    video.getSize(),
+                    thumbnail.getSize(),
+                    post.getCreatedAt()
+            ));
+
+
+            // force fail test
+//            if (dto.getTitle().toLowerCase().contains("fail")) {
+//                throw new RuntimeException("Forced failure for rollback test");
+//            }
 
             return new CreateVideoPostResponseDTO(
                     post.getId(),
