@@ -2,7 +2,7 @@ package jutjubic.isa.backend.messaging.dto;
 
 import java.time.Instant;
 
-public class UploadCreatedEvent {
+public class UploadCreatedEventDTO {
     private Long videoId;
     private String title;
     private String authorUsername;
@@ -10,7 +10,7 @@ public class UploadCreatedEvent {
     private long thumbnailSizeBytes;
     private Instant createdAt;
 
-    public UploadCreatedEvent() {}
+    public UploadCreatedEventDTO() {}
 
     public Long getVideoId() { return videoId; }
     public void setVideoId(Long videoId) { this.videoId = videoId; }

@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/activate",
                                 "/api/auth/login",
-                                "/api/public/**"
+                                "/api/public/**",
+                                "/web_socket/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

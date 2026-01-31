@@ -1,7 +1,7 @@
 package jutjubic.isa.backend.messaging.publisher;
 
 import jutjubic.isa.backend.messaging.RabbitNames;
-import jutjubic.isa.backend.messaging.dto.UploadCreatedEvent;
+import jutjubic.isa.backend.messaging.dto.UploadCreatedEventDTO;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -23,7 +23,7 @@ public class UploadEventPublisher {
         this.protobufRabbitTemplate = protobufRabbitTemplate;
     }
 
-    public void publishUploadCreatedJson(UploadCreatedEvent event) {
+    public void publishUploadCreatedJson(UploadCreatedEventDTO event) {
         jsonRabbitTemplate.convertAndSend(
                 RabbitNames.EXCHANGE_UPLOAD,
                 RabbitNames.RK_JSON,
