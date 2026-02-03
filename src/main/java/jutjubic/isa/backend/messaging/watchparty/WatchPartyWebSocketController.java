@@ -2,6 +2,7 @@ package jutjubic.isa.backend.messaging.watchparty;
 
 import jutjubic.isa.backend.dto.watchparty.StartVideoMessageDTO;
 import jutjubic.isa.backend.dto.watchparty.WatchPartyEventDTO;
+import jutjubic.isa.backend.dto.watchparty.WatchPartyRoomInfoDTO;
 import jutjubic.isa.backend.service.watchparty.WatchPartyRoomService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,8 +26,24 @@ public class WatchPartyWebSocketController {
     @MessageMapping("/watchparty/{roomId}/join")
     public void join(@DestinationVariable String roomId, Principal principal) {
 
-        roomService.getRoom(roomId);
+        if (principal == null) {
+            messagingTemplate.convertAndSend(
+                    "/topic/watchparty/" + roomId,
+                    WatchPartyEventDTO.error(roomId, "principal is null (WS not authenticated)")
+            );
+            return;
+        }
+
+        String email = principal.getName();
+
+        WatchPartyRoomInfoDTO room = roomService.joinRoom(roomId, email);
+
+        messagingTemplate.convertAndSend(
+                "/topic/watchparty/" + roomId,
+                WatchPartyEventDTO.userJoined(roomId, email, room.getMemberCount())
+        );
     }
+
 
     @MessageMapping("/watchparty/{roomId}/start")
     public void startVideo(@DestinationVariable String roomId,
@@ -61,6 +78,8 @@ public class WatchPartyWebSocketController {
             );
             return;
         }
+
+        roomService.startVideo(roomId, msg.getVideoId());
 
         // broadcast event svima u sobi
         messagingTemplate.convertAndSend(
