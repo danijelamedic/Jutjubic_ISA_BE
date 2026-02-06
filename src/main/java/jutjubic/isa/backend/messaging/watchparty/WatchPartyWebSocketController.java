@@ -86,5 +86,12 @@ public class WatchPartyWebSocketController {
                 "/topic/watchparty/" + roomId,
                 WatchPartyEventDTO.start(roomId, msg.getVideoId(), email)
         );
+
+        // broadcast i za home listu soba
+        messagingTemplate.convertAndSend(
+                "/topic/watchparty/rooms",
+                WatchPartyEventDTO.start(roomId, msg.getVideoId(), email)
+        );
+
     }
 }

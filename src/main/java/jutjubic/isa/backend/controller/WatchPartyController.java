@@ -85,31 +85,26 @@ public class WatchPartyController {
     public WatchPartyRoomInfoDTO leaveRoom(@PathVariable String roomId, Principal principal) {
         String email = principal.getName();
 
+        boolean wasOwner = roomService.isOwner(roomId, email);
+
         WatchPartyRoomInfoDTO room = roomService.leaveRoom(roomId, email);
 
-        // owner je izasao = soba se obrisala
-        if (room == null) {
-            // obavesti lobby da je soba zatvorena
+        if (wasOwner) {
             messagingTemplate.convertAndSend(
                     "/topic/watchparty/rooms",
                     WatchPartyEventDTO.roomClosed(roomId, email)
             );
-
-            // obavesti sobu (ako neko još slusa) da je zatvorena
             messagingTemplate.convertAndSend(
                     "/topic/watchparty/" + roomId,
                     WatchPartyEventDTO.roomClosed(roomId, email)
             );
-
-            return null;
+            return room;
         }
 
-        // guest je izasao = obavesti lobby i sobu
         messagingTemplate.convertAndSend(
                 "/topic/watchparty/rooms",
                 WatchPartyEventDTO.userLeft(roomId, email, room.getMemberCount())
         );
-
         messagingTemplate.convertAndSend(
                 "/topic/watchparty/" + roomId,
                 WatchPartyEventDTO.userLeft(roomId, email, room.getMemberCount())

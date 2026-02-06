@@ -78,12 +78,13 @@ public class WatchPartyRoomService {
         state.members.remove(email);
 
         if (state.ownerEmail.equals(email)) {
-            rooms.remove(roomId);
-            return null;
+            state.status = RoomStatus.CLOSED;
+            return toDto(state);
         }
 
         return toDto(state);
     }
+
 
     public WatchPartyRoomInfoDTO startVideo(String roomId, Long videoId) {
         if (roomId != null) roomId = roomId.trim();
